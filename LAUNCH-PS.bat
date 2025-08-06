@@ -1,0 +1,3 @@
+@echo off
+echo Opening Windows PowerShell with proper window handle...
+start "" "%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe" -NoExit -Command "Write-Host 'Ready for O365 connection!' -ForegroundColor Green; Write-Host 'Copy and paste the commands from SIMPLE-FIX.txt' -ForegroundColor Yellow"

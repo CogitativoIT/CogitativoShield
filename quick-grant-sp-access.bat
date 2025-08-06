@@ -1,0 +1,2 @@
+@echo off
+call az role assignment create --assignee "9a3351d0-f816-4e6f-95d4-f90ac882a479" --role "Storage Blob Data Contributor" --scope "/subscriptions/fb344b4b-f3a4-45a5-81d6-c1f911fcb4ed/resourceGroups/rg-pbi-vendor-isolated/providers/Microsoft.Storage/storageAccounts/pbivend9084"

@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CogitativoShield - Security Operations Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #151a3a;
+            --bg-card: #1e2444;
+            --text-primary: #ffffff;
+            --text-secondary: #8892b0;
+            --accent-green: #00ff88;
+            --accent-red: #ff3366;
+            --accent-yellow: #ffcc00;
+            --accent-blue: #00a8ff;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #00ff88 0%, #00a8ff 100%);
+            --gradient-danger: linear-gradient(135deg, #ff3366 0%, #ff6b6b 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--accent-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .threat-level {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .threat-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border-radius: 50px;
+            border: 2px solid var(--accent-green);
+        }
+
+        .threat-level-text {
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        .live-indicator {
+            width: 10px;
+            height: 10px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-2);
+        }
+
+        .stat-card.danger::before {
+            background: var(--gradient-danger);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.9rem;
+            color: var(--accent-green);
+        }
+
+        .stat-change.negative {
+            color: var(--accent-red);
+        }
+
+        /* Action Buttons */
+        .actions-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: var(--bg-card);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.3), transparent);
+            transition: width 0.3s, height 0.3s;
+            transform: translate(-50%, -50%);
+        }
+
+        .action-btn:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .action-btn:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .action-btn.danger:hover {
+            border-color: var(--accent-red);
+            box-shadow: 0 5px 20px rgba(255, 51, 102, 0.3);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-text {
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Live Feed */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .feed-section {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: 400px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feed-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .feed-item {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .feed-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .feed-icon.blocked { background: rgba(255, 51, 102, 0.2); color: var(--accent-red); }
+        .feed-icon.report { background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); }
+        .feed-icon.scan { background: rgba(0, 168, 255, 0.2); color: var(--accent-blue); }
+
+        .feed-details {
+            flex: 1;
+        }
+
+        .feed-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .feed-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Top Reporters */
+        .reporters-section {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .reporter-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .reporter-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .reporter-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .reporter-name {
+            font-weight: 500;
+        }
+
+        .reporter-count {
+            background: var(--gradient-2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* Command Terminal */
+        .terminal-section {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .terminal {
+            background: #000;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        .terminal-line {
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .terminal-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .terminal-input input {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .terminal-input button {
+            background: var(--gradient-2);
+            border: none;
+            border-radius: 5px;
+            padding: 0.75rem 1.5rem;
+            color: var(--bg-primary);
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .terminal-input button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .action-buttons {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-green);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Notification Badge */
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent-red);
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-3px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">🛡️</div>
+            <div class="logo-text">CogitativoShield</div>
+        </div>
+        <div class="threat-level">
+            <div class="threat-indicator">
+                <div class="live-indicator"></div>
+                <span>LIVE MONITORING</span>
+            </div>
+            <div class="threat-indicator">
+                <span>THREAT LEVEL:</span>
+                <span class="threat-level-text" id="threatLevel">MODERATE</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Emails Processed Today</div>
+                    <div class="stat-icon">📧</div>
+                </div>
+                <div class="stat-value" id="emailsProcessed">247</div>
+                <div class="stat-change">↑ 12% from yesterday</div>
+            </div>
+            
+            <div class="stat-card danger">
+                <div class="stat-header">
+                    <div class="stat-title">Threats Blocked</div>
+                    <div class="stat-icon">🚫</div>
+                </div>
+                <div class="stat-value" id="threatsBlocked">18</div>
+                <div class="stat-change negative">↑ 35% increase</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">DMARC Pass Rate</div>
+                    <div class="stat-icon">✅</div>
+                </div>
+                <div class="stat-value" id="dmarcRate">88%</div>
+                <div class="stat-change">↑ 2% improvement</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Active Reporters</div>
+                    <div class="stat-icon">👥</div>
+                </div>
+                <div class="stat-value" id="activeReporters">7</div>
+                <div class="stat-change">+2 new this week</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Quarantine</div>
+                    <div class="stat-icon">🔒</div>
+                </div>
+                <div class="stat-value" id="quarantine">100</div>
+                <div class="stat-change">Pending review</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">System Health</div>
+                    <div class="stat-icon">📊</div>
+                </div>
+                <div class="stat-value" id="systemHealth">98%</div>
+                <div class="stat-change">All systems operational</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="actions-section">
+            <h2 class="section-title">🚀 Quick Actions</h2>
+            <div class="action-buttons">
+                <button class="action-btn" onclick="runScan()">
+                    <span class="badge">3</span>
+                    <div class="action-icon">🔍</div>
+                    <div class="action-text">Run Security Scan</div>
+                </button>
+                
+                <button class="action-btn" onclick="processSpam()">
+                    <div class="action-icon">🎣</div>
+                    <div class="action-text">Process Spam Reports</div>
+                </button>
+                
+                <button class="action-btn" onclick="blockSenders()">
+                    <div class="action-icon">🚫</div>
+                    <div class="action-text">Block Spammers</div>
+                </button>
+                
+                <button class="action-btn" onclick="generateReport()">
+                    <div class="action-icon">📈</div>
+                    <div class="action-text">Daily Report</div>
+                </button>
+                
+                <button class="action-btn" onclick="reviewQuarantine()">
+                    <div class="action-icon">🔓</div>
+                    <div class="action-text">Review Quarantine</div>
+                </button>
+                
+                <button class="action-btn danger" onclick="emergencyBlock()">
+                    <div class="action-icon">🎯</div>
+                    <div class="action-text">Emergency Block</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Live Feed -->
+            <div class="feed-section">
+                <div class="feed-header">
+                    <h3>🔴 Live Activity Feed</h3>
+                    <div class="loading"></div>
+                </div>
+                <div class="feed-content" id="liveFeed">
+                    <!-- Feed items will be added here dynamically -->
+                </div>
+            </div>
+            
+            <!-- Top Reporters -->
+            <div class="reporters-section">
+                <div class="feed-header">
+                    <h3>🏆 Top Security Champions</h3>
+                </div>
+                <div id="topReporters">
+                    <!-- Reporter items will be added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Command Terminal -->
+        <div class="terminal-section">
+            <h2 class="section-title">💻 Command Terminal</h2>
+            <div class="terminal" id="terminal">
+                <div class="terminal-line">CogitativoShield Security Terminal v2.0</div>
+                <div class="terminal-line">Type 'help' for available commands...</div>
+            </div>
+            <div class="terminal-input">
+                <input type="text" id="commandInput" placeholder="Enter command..." onkeypress="handleCommand(event)">
+                <button onclick="executeCommand()">Execute</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize dashboard
+        let feedData = [];
+        let reportersData = [];
+        
+        // Simulated live feed data
+        function addFeedItem(type, message) {
+            const feed = document.getElementById('liveFeed');
+            const item = document.createElement('div');
+            item.className = 'feed-item';
+            
+            const icons = {
+                blocked: { icon: '🚫', class: 'blocked' },
+                report: { icon: '📧', class: 'report' },
+                scan: { icon: '🔍', class: 'scan' }
+            };
+            
+            const iconData = icons[type] || icons.scan;
+            const time = new Date().toLocaleTimeString();
+            
+            item.innerHTML = `
+                <div class="feed-icon ${iconData.class}">${iconData.icon}</div>
+                <div class="feed-details">
+                    <div class="feed-title">${message}</div>
+                    <div class="feed-time">${time}</div>
+                </div>
+            `;
+            
+            feed.insertBefore(item, feed.firstChild);
+            
+            // Keep only last 10 items
+            while (feed.children.length > 10) {
+                feed.removeChild(feed.lastChild);
+            }
+        }
+        
+        // Update top reporters
+        function updateReporters() {
+            const reporters = [
+                { name: 'David Buhler', count: 6, initials: 'DB' },
+                { name: 'Gary Velasquez', count: 5, initials: 'GV' },
+                { name: 'Andre Darby', count: 3, initials: 'AD' },
+                { name: 'Sarah Chen', count: 2, initials: 'SC' },
+                { name: 'Mike Johnson', count: 1, initials: 'MJ' }
+            ];
+            
+            const container = document.getElementById('topReporters');
+            container.innerHTML = '';
+            
+            reporters.forEach(reporter => {
+                const item = document.createElement('div');
+                item.className = 'reporter-item';
+                item.innerHTML = `
+                    <div class="reporter-info">
+                        <div class="reporter-avatar">${reporter.initials}</div>
+                        <div class="reporter-name">${reporter.name}</div>
+                    </div>
+                    <div class="reporter-count">${reporter.count}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        // Command functions
+        function runScan() {
+            addFeedItem('scan', 'Security scan initiated...');
+            executePS('C:\\Users\\andre.darby\\Ops\\FULL-CONNECT-AND-AUDIT.ps1');
+        }
+        
+        function processSpam() {
+            addFeedItem('report', 'Processing spam reports...');
+            executePS('C:\\Users\\andre.darby\\Ops\\ADVANCED-SPAM-EXTRACTION.ps1');
+        }
+        
+        function blockSenders() {
+            addFeedItem('blocked', 'Blocking spam senders...');
+            executePS('C:\\Users\\andre.darby\\Ops\\FINAL-BLOCK-SPAMMERS.ps1');
+        }
+        
+        function generateReport() {
+            addFeedItem('report', 'Generating daily report...');
+            executePS('C:\\Users\\andre.darby\\Ops\\DAILY-SECURITY-REPORT.ps1');
+        }
+        
+        function reviewQuarantine() {
+            addFeedItem('scan', 'Opening quarantine review...');
+            window.open('https://security.microsoft.com/quarantine', '_blank');
+        }
+        
+        function emergencyBlock() {
+            const email = prompt('Enter email to block immediately:');
+            if (email) {
+                addFeedItem('blocked', `Emergency block: ${email}`);
+                executePS(`Add-TenantAllowBlockListItems -ListType Sender -Block -Entries "${email}"`);
+            }
+        }
+        
+        // Execute PowerShell command
+        function executePS(command) {
+            const terminal = document.getElementById('terminal');
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            line.textContent = `> Executing: ${command}`;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+            
+            // In real implementation, this would call PowerShell
+            setTimeout(() => {
+                const result = document.createElement('div');
+                result.className = 'terminal-line';
+                result.textContent = '✅ Command executed successfully';
+                terminal.appendChild(result);
+                terminal.scrollTop = terminal.scrollHeight;
+            }, 2000);
+        }
+        
+        // Terminal command handler
+        function handleCommand(event) {
+            if (event.key === 'Enter') {
+                executeCommand();
+            }
+        }
+        
+        function executeCommand() {
+            const input = document.getElementById('commandInput');
+            const command = input.value.trim();
+            
+            if (command) {
+                const terminal = document.getElementById('terminal');
+                const line = document.createElement('div');
+                line.className = 'terminal-line';
+                line.textContent = `> ${command}`;
+                terminal.appendChild(line);
+                
+                // Process command
+                if (command.toLowerCase() === 'help') {
+                    const help = document.createElement('div');
+                    help.className = 'terminal-line';
+                    help.innerHTML = `
+                        Available commands:<br>
+                        • scan - Run security scan<br>
+                        • block [email] - Block sender<br>
+                        • report - Generate report<br>
+                        • status - System status<br>
+                        • clear - Clear terminal
+                    `;
+                    terminal.appendChild(help);
+                } else if (command.toLowerCase() === 'clear') {
+                    terminal.innerHTML = '<div class="terminal-line">Terminal cleared.</div>';
+                } else if (command.toLowerCase() === 'status') {
+                    const status = document.createElement('div');
+                    status.className = 'terminal-line';
+                    status.textContent = 'All systems operational. Threat level: MODERATE';
+                    terminal.appendChild(status);
+                } else {
+                    executePS(command);
+                }
+                
+                terminal.scrollTop = terminal.scrollHeight;
+                input.value = '';
+            }
+        }
+        
+        // Update stats periodically
+        function updateStats() {
+            // Simulate real-time updates
+            document.getElementById('emailsProcessed').textContent = 
+                Math.floor(Math.random() * 50) + 220;
+            
+            // Add random feed items
+            const feedTypes = [
+                { type: 'blocked', message: 'Blocked suspicious sender: spam***@fake.com' },
+                { type: 'report', message: 'New spam report from david.buhler@cogitativo.com' },
+                { type: 'scan', message: 'Automated DMARC scan completed' },
+                { type: 'blocked', message: 'IP 192.168.1.100 added to block list' },
+                { type: 'report', message: 'Phishing attempt detected and quarantined' }
+            ];
+            
+            if (Math.random() > 0.7) {
+                const item = feedTypes[Math.floor(Math.random() * feedTypes.length)];
+                addFeedItem(item.type, item.message);
+            }
+        }
+        
+        // Initialize on load
+        window.onload = function() {
+            updateReporters();
+            
+            // Add initial feed items
+            addFeedItem('scan', 'Dashboard initialized successfully');
+            addFeedItem('report', 'Loading security data...');
+            
+            // Update stats every 5 seconds
+            setInterval(updateStats, 5000);
+            
+            // Update threat level based on time
+            setInterval(() => {
+                const threats = ['LOW', 'MODERATE', 'ELEVATED', 'HIGH'];
+                const current = document.getElementById('threatLevel');
+                const random = Math.random();
+                
+                if (random > 0.9) {
+                    current.textContent = 'HIGH';
+                    current.style.color = 'var(--accent-red)';
+                } else if (random > 0.7) {
+                    current.textContent = 'ELEVATED';
+                    current.style.color = 'var(--accent-yellow)';
+                } else if (random > 0.3) {
+                    current.textContent = 'MODERATE';
+                    current.style.color = 'var(--accent-green)';
+                } else {
+                    current.textContent = 'LOW';
+                    current.style.color = 'var(--accent-blue)';
+                }
+            }, 10000);
+        };
+    </script>
+</body>
+</html>
