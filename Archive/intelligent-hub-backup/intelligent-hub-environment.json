@@ -1,0 +1,68 @@
+{
+  "id": "/subscriptions/fb344b4b-f3a4-45a5-81d6-c1f911fcb4ed/resourceGroups/cogitativo-rg/providers/Microsoft.App/managedEnvironments/cogitativo-intelligent-hub-env",
+  "location": "East US",
+  "name": "cogitativo-intelligent-hub-env",
+  "properties": {
+    "appInsightsConfiguration": null,
+    "appLogsConfiguration": {
+      "destination": "log-analytics",
+      "logAnalyticsConfiguration": {
+        "customerId": "a123e4fe-7116-4822-9491-612fb248be3c",
+        "sharedKey": null
+      }
+    },
+    "customDomainConfiguration": {
+      "certificateKeyVaultProperties": null,
+      "certificatePassword": null,
+      "certificateValue": null,
+      "customDomainVerificationId": "44327D66C239A11658177F50C937FC3A0885DD04CFFE976EF1A7DA61E59442D4",
+      "dnsSuffix": null,
+      "expirationDate": null,
+      "subjectName": null,
+      "thumbprint": null
+    },
+    "daprAIConnectionString": null,
+    "daprAIInstrumentationKey": null,
+    "daprConfiguration": {
+      "version": "1.13.6-msft.6"
+    },
+    "defaultDomain": "lemoncoast-18e54811.eastus.azurecontainerapps.io",
+    "eventStreamEndpoint": "https://eastus.azurecontainerapps.dev/subscriptions/fb344b4b-f3a4-45a5-81d6-c1f911fcb4ed/resourceGroups/cogitativo-rg/managedEnvironments/cogitativo-intelligent-hub-env/eventstream",
+    "infrastructureResourceGroup": null,
+    "kedaConfiguration": {
+      "version": "2.17.2"
+    },
+    "openTelemetryConfiguration": null,
+    "peerAuthentication": {
+      "mtls": {
+        "enabled": false
+      }
+    },
+    "peerTrafficConfiguration": {
+      "encryption": {
+        "enabled": false
+      }
+    },
+    "provisioningState": "Succeeded",
+    "staticIp": "172.214.126.103",
+    "vnetConfiguration": null,
+    "workloadProfiles": [
+      {
+        "enableFips": false,
+        "name": "Consumption",
+        "workloadProfileType": "Consumption"
+      }
+    ],
+    "zoneRedundant": false
+  },
+  "resourceGroup": "cogitativo-rg",
+  "systemData": {
+    "createdAt": "2025-08-14T18:56:11.8034217",
+    "createdBy": "andre.darby@cogitativo.com",
+    "createdByType": "User",
+    "lastModifiedAt": "2025-08-14T18:56:11.8034217",
+    "lastModifiedBy": "andre.darby@cogitativo.com",
+    "lastModifiedByType": "User"
+  },
+  "type": "Microsoft.App/managedEnvironments"
+}

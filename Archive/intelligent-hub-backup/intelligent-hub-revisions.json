@@ -1,0 +1,77 @@
+[
+  {
+    "id": "/subscriptions/fb344b4b-f3a4-45a5-81d6-c1f911fcb4ed/resourceGroups/cogitativo-rg/providers/Microsoft.App/containerApps/cogitativo-intelligent-hub/revisions/cogitativo-intelligent-hub--0000014",
+    "name": "cogitativo-intelligent-hub--0000014",
+    "properties": {
+      "active": true,
+      "createdTime": "2025-08-16T02:47:22+00:00",
+      "fqdn": "cogitativo-intelligent-hub--0000014.lemoncoast-18e54811.eastus.azurecontainerapps.io",
+      "healthState": "Healthy",
+      "provisioningState": "Provisioned",
+      "replicas": 1,
+      "runningState": "Running",
+      "template": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "DB_HOST",
+                "value": "cogitativo-hub-db.postgres.database.azure.com"
+              },
+              {
+                "name": "DB_NAME",
+                "value": "cogitativo_hub"
+              },
+              {
+                "name": "DB_USER",
+                "value": "cogitativoadmin"
+              },
+              {
+                "name": "DB_PASSWORD",
+                "value": "CogitativoHub2025!"
+              },
+              {
+                "name": "DROPBOX_APP_KEY",
+                "value": "4eomaw1735h4ws9"
+              },
+              {
+                "name": "DROPBOX_APP_SECRET",
+                "value": "0c977notws0o1f1"
+              },
+              {
+                "name": "DATABASE_PATH",
+                "value": "C:/Program Files/Git/mnt/database/research.db"
+              },
+              {
+                "name": "PYTHONPATH",
+                "value": "C:/Program Files/Git/app"
+              }
+            ],
+            "image": "cogitativohubacr.azurecr.io/intelligent-hub:security-fix-v2",
+            "name": "cogitativo-intelligent-hub",
+            "probes": [],
+            "resources": {
+              "cpu": 1.0,
+              "memory": "2Gi"
+            }
+          }
+        ],
+        "initContainers": null,
+        "revisionSuffix": null,
+        "scale": {
+          "cooldownPeriod": null,
+          "maxReplicas": 3,
+          "minReplicas": 1,
+          "pollingInterval": null,
+          "rules": null
+        },
+        "serviceBinds": null,
+        "terminationGracePeriodSeconds": null,
+        "volumes": null
+      },
+      "trafficWeight": 100
+    },
+    "resourceGroup": "cogitativo-rg",
+    "type": "Microsoft.App/containerapps/revisions"
+  }
+]
